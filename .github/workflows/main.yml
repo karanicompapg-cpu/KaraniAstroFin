@@ -2,53 +2,54 @@ name: Auto Build & Release
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: windows-latest
-
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout Repo
+      uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
 
-      - name: Install dependencies
-        run: |
-          cd KaraniAstroFin_CI_SETUP_NEW
-          npm install
+    # ----------------------------
+    # FIXED — सही path (app/)
+    # ----------------------------
+    - name: Install dependencies
+      run: |
+        cd app
+        npm install
 
-      - name: Build Electron App
-        run: |
-          cd KaraniAstroFin_CI_SETUP_NEW
-          npm run build
+    - name: Build Electron App
+      run: |
+        cd app
+        npm run build
 
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: KaraniAstroFin_CI_SETUP_NEW/dist/
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: KaraniAstroFin-Windows-Build
+        path: app/dist/*
+
 
   release:
     needs: build
     runs-on: windows-latest
-
+    
     steps:
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v3
         with:
-          name: build-output
-          path: release/
+          name: KaraniAstroFin-Windows-Build
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v1
         with:
-          files: release/**
+          files: KaraniAstroFin-Windows-Build/*
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
