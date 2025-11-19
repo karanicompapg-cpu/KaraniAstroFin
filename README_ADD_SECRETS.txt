@@ -1,0 +1,1 @@
+Add GH_TOKEN secret
