@@ -1,1 +1,1 @@
-Add GH_TOKEN secret
+Add GH_TOKEN and PFX secrets.
